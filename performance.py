@@ -78,16 +78,15 @@ if mode == "Upload CSV file":
 # Manual Input Mode
 else:
     input_df = get_user_input()
-    if st.button("🔮 Predict Performance Rating"):
-        prediction = int(model.predict(input_df)[0])
-        st.subheader(f"🎯 Predicted Performance Rating: **{prediction}**")
-        if prediction == 2:
-            st.warning("⚠️ Low performer. Recommend performance improvement plan or training.")
-        elif prediction == 3:
-            st.info("ℹ️ Average performer. Encourage growth through learning & development.")
-        elif prediction == 4:
-            st.success("🌟 High performer! Recommend bonus, promotion, or retention strategy.")
-        else:
-            st.error("❌ Unexpected prediction value.")
+if st.button("Predict Performance Rating"):
+    prediction = int(model.predict(input_df)[0])
+    st.subheader(f"Predicted Performance Rating: **{prediction}**")
+
+    if prediction == 2:
+        st.warning("Low performance detected. Recommend performance improvement plan or training support.")
+    elif prediction == 3:
+        st.info("Average performer. Encourage continued growth through learning & development.")
+    elif prediction == 4:
+        st.success("High performer! Consider promotion, bonus, or retention strategy.")
 
 
