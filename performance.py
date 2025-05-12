@@ -70,7 +70,7 @@ if mode == "Upload CSV file":
         input_df = pd.read_csv(uploaded_file)
         preds = model.predict(input_df)
         input_df['PredictedPerformanceRating'] = preds
-        st.success("✅ Predictions complete!")
+        st.success("Predictions complete!")
         st.dataframe(input_df)
         csv = input_df.to_csv(index=False).encode('utf-8')
         st.download_button("Download Predictions as CSV", csv, "predictions.csv", "text/csv")
@@ -79,14 +79,16 @@ if mode == "Upload CSV file":
 else:
     input_df = get_user_input()
 if st.button("Predict Performance Rating"):
-    prediction = int(model.predict(input_df)[0])
+    prediction_encoded = int(model.predict(input_df)[0])
+    prediction = prediction_encoded + 2  # Convert back to original rating (2, 3, 4)
+
     st.subheader(f"Predicted Performance Rating: **{prediction}**")
 
     if prediction == 2:
-        st.warning("Low performance detected. Recommend performance improvement plan or training support.")
+        st.warning("Low performer. Recommend performance improvement plan or training.")
     elif prediction == 3:
-        st.info("Average performer. Encourage continued growth through learning & development.")
+        st.info("ℹAverage performer. Encourage growth through learning & development.")
     elif prediction == 4:
-        st.success("High performer! Consider promotion, bonus, or retention strategy.")
-
-
+        st.success("High performer! Recommend bonus, promotion, or retention strategy.")
+    else:
+        st.error("Unexpected prediction value.")
