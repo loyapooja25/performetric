@@ -68,12 +68,33 @@ if mode == "Upload CSV file":
     uploaded_file = st.file_uploader("Upload CSV file for batch prediction", type=["csv"])
     if uploaded_file is not None:
         input_df = pd.read_csv(uploaded_file)
-        preds = model.predict(input_df)
-        input_df['PredictedPerformanceRating'] = preds
-        st.success("Predictions complete!")
+
+        # Predict and convert 0/1/2 → 2/3/4
+        preds = model.predict(input_df) + 2
+        input_df['PredictedPerformanceRating'] = preds.astype(int)
+
+        # Add recommendation column
+        def get_recommendation(rating):
+            if rating == 2:
+                return "Low performer – Recommend PIP or training"
+            elif rating == 3:
+                return "Average – Encourage development"
+            elif rating == 4:
+                return "High performer – Retain, promote, or reward"
+            else:
+                return "Unexpected rating"
+
+        input_df['Recommendation'] = input_df['PredictedPerformanceRating'].apply(get_recommendation)
+
+        # Display the result
+        st.success("Predictions and recommendations complete!")
         st.dataframe(input_df)
+
+        # Downloadable CSV
         csv = input_df.to_csv(index=False).encode('utf-8')
-        st.download_button("Download Predictions as CSV", csv, "predictions.csv", "text/csv")
+        st.download_button("Download with Recommendations", csv, "predictions_with_recommendations.csv", "text/csv")
+
+
 
 # Manual Input Mode
 else:
